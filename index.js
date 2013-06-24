@@ -74,6 +74,31 @@
 
   request.cookie = r.cookie;
 
+  request.defaults = function(options) {
+    var de, def, key, _i, _len, _ref;
+    def = function(method) {
+      return function(uri, opt) {
+        var key, params, _i, _len;
+        params = r.initParams(uri, opt, null);
+        for (_i = 0, _len = options.length; _i < _len; _i++) {
+          key = options[_i];
+          if (parms.options[key] === void 0) {
+            parms.options[key] = options[key];
+          }
+        }
+        return method(params.uri, params.options);
+      };
+    };
+    de = def(request);
+    _ref = ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie', 'defaults'];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      key = _ref[_i];
+      de[key] = def(request[key]);
+    }
+    de.jar = request.jar;
+    return de;
+  };
+
   module.exports = request;
 
 }).call(this);

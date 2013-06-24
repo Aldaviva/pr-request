@@ -38,5 +38,19 @@ request.initParams = r.initParams
 request.jar = r.jar
 request.cookie = r.cookie
 
+request.defaults = (options)->
+  def = (method)->
+    (uri, opt)->
+      params = r.initParams(uri, opt, null)
+      for key in options
+        if parms.options[key] is undefined
+          parms.options[key] = options[key]
+      return method(params.uri, params.options)
+  de = def(request)
+  for key in ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie', 'defaults']
+    de[key] = def(request[key])
+  de.jar = request.jar
+  return de
+
 # Export it
 module.exports = request

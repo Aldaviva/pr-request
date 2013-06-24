@@ -71,19 +71,19 @@ test_verb_delete = ()->
   )
 
 test_cookie_jar = ()->
-  #request = request.defaults({jar: false})
-  request('https://httpbin.org/cookies/set', {qs: {foo: "bar"}, jar: request.jar()})
+  request = request.defaults({jar: request.jar()})
+  request('https://httpbin.org/cookies/set', {qs: {foo: "bar"}})
   .then((resp)->
     json_data = JSON.parse(resp.body)
     throw new Error('COOKIE "foo" not stored') if json_data.cookies.foo != "bar"
-    request('https://httpbin.org/cookies', {jar: request.jar()})
+    request('https://httpbin.org/cookies')
   )
   .then((resp)->
     json_data = JSON.parse(resp.body)
-    throw new Error("COOKIE is stored, while it shouldn't have been.") if json_data.cookies.foo?
-    console.log('request(uri, {jar: request.jar()}): OK')
+    throw new Error("COOKIE isn't stored, while it should have been.") if json_data.cookies.foo != "bar"
+    console.log('request(uri, {jar: …}): OK')
   ).fail((err)->
-    console.log('request(uri, {jar: request.jar()}): FAIL (' + err + ')')
+    console.log('request(uri, {jar: …}): FAIL (' + err + ')')
   )
 
 Q.all(
