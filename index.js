@@ -6,10 +6,13 @@
 
   r = require('request');
 
-  request = function(uri) {
+  request = function(uri, options) {
     var deferred, req;
+    if (options == null) {
+      options = {};
+    }
     deferred = Q.defer();
-    req = r(uri, function(err, res) {
+    req = r(uri, options, function(err, res) {
       if (err) {
         return deferred.reject(err);
       } else {

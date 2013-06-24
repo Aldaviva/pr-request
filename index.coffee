@@ -1,9 +1,9 @@
 Q = require 'q'
 r = require 'request'
 
-request = (uri)->
+request = (uri, options={})->
   deferred = Q.defer()
-  req = r(uri, (err, res)->
+  req = r(uri, options, (err, res)->
       if err
         deferred.reject(err)
       else
