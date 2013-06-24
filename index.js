@@ -68,6 +68,12 @@
     return _create_method(uri, options, 'DELETE');
   };
 
+  request.initParams = r.initParams;
+
+  request.jar = r.jar;
+
+  request.cookie = r.cookie;
+
   module.exports = request;
 
 }).call(this);

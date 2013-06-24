@@ -70,6 +70,22 @@ test_verb_delete = ()->
     console.log('request.del(uri, options): FAIL (' + err + ')')
   )
 
+test_cookie_jar = ()->
+  #request = request.defaults({jar: false})
+  request('https://httpbin.org/cookies/set', {qs: {foo: "bar"}, jar: request.jar()})
+  .then((resp)->
+    json_data = JSON.parse(resp.body)
+    throw new Error('COOKIE "foo" not stored') if json_data.cookies.foo != "bar"
+    request('https://httpbin.org/cookies', {jar: request.jar()})
+  )
+  .then((resp)->
+    json_data = JSON.parse(resp.body)
+    throw new Error("COOKIE is stored, while it shouldn't have been.") if json_data.cookies.foo?
+    console.log('request(uri, {jar: request.jar()}): OK')
+  ).fail((err)->
+    console.log('request(uri, {jar: request.jar()}): FAIL (' + err + ')')
+  )
+
 Q.all(
   test_simple(),
   test_options(),
@@ -77,5 +93,6 @@ Q.all(
   test_verb_head(),
   test_verb_post(),
   test_verb_put(),
-  test_verb_delete()
+  test_verb_delete(),
+  test_cookie_jar()
 )

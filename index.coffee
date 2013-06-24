@@ -33,5 +33,10 @@ request.head = (uri, options={})->
   return deferred.promise
 request.del = (uri, options)-> _create_method(uri, options, 'DELETE')
 
+# Patch the other methods (they don't use promises) right through
+request.initParams = r.initParams
+request.jar = r.jar
+request.cookie = r.cookie
+
 # Export it
 module.exports = request
