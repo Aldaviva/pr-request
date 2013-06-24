@@ -27,6 +27,10 @@ Note, currently only the main `request` function is supported.
 
     $ npm install pr-request
 
+## tests
+
+    $ npm test
+
 ## kudos and respect to
 
 @mikeal and the rest of the `request` contributors
