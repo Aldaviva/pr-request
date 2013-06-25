@@ -1,29 +1,27 @@
 {
-  "name": "pr-request",
-  "version": "0.1.0",
+  "name": "pr-request2",
+  "version": "0.2.0",
   "description": "promisified `request` module",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test"
+    "test": "node_modules/.bin/coffee test/test.coffee"
   },
-  "repository": "git@github.com:jden/pr-request.git",
+  "repository": "git@github.com:gvangool/pr-request.git",
   "keywords": [
     "promise",
     "request",
     "http",
-    "promises"
+    "promises",
+    "q"
   ],
-  "author": "jden <jason@denizac.org>",
+  "author": "gvangool <gertvangool@gmail.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
     "request": "~2.16.6",
-    "q": "~0.9.2"
+    "q": "~0.9.6"
   },
   "devDependencies": {
     "coffee-script": "~1.6.3"
-  },
-  "scripts": {
-    "test": "node_modules/.bin/coffee test/test.coffee"
   }
 }
