@@ -15,7 +15,11 @@ request = (uri, options={})->
 _create_method = (uri, options={}, method)->
   params = r.initParams(uri, options, null)
   params.options.method = method
-  return request(params.uri || null, params.options)
+  if typeof params.options?._requester == 'function'
+    _request = params.options._requester
+  else
+    _request = request
+  return _request(params.uri || null, params.options)
 
 # Handle the HTTP verbs
 request.get = (uri, options)-> _create_method(uri, options, 'GET')
@@ -24,7 +28,11 @@ request.put = (uri, options)-> _create_method(uri, options, 'PUT')
 request.patch = (uri, options)-> _create_method(uri, options, 'PATCH')
 request.head = (uri, options={})->
   deferred = Q.defer()
-  req = r.head(uri, options, (err, res)->
+  if typeof options?._requester == 'function'
+    _request = options._requester
+  else
+    _request = r
+  req = _request.head(uri, options, (err, res)->
     if err
       deferred.reject(err)
     else
@@ -38,18 +46,31 @@ request.initParams = r.initParams
 request.jar = r.jar
 request.cookie = r.cookie
 
-request.defaults = (options)->
+request.defaults = (options={})->
+  if typeof options._requester == 'function'
+    requester = options._requester
+  else
+    requester = request
+
   def = (method)->
     (uri, opt)->
       params = r.initParams(uri, opt, null)
-      for key in options
-        if parms.options[key] is undefined
-          parms.options[key] = options[key]
+      for key, value of options
+        if params.options[key] is undefined
+          params.options[key] = value
+      params.options._requester = requester
       return method(params.uri, params.options)
-  de = def(request)
-  for key in ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie', 'defaults']
-    de[key] = def(request[key])
-  de.jar = request.jar
+  de = def(requester)
+  for key in ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie']
+    de[key] = def(requester[key])
+  de.jar = requester.jar
+  de.defaults = (opt)->
+    params = r.initParams(null, opt, null)
+    for key, value of options
+      if params.options[key] is undefined
+        params.options[key] = value
+    params.options._requester = requester
+    return requester.defaults(params.options)
   return de
 
 # Export it

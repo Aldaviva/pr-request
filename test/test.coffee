@@ -86,6 +86,20 @@ test_cookie_jar = ()->
     console.log('request(uri, {jar: …}): FAIL (' + err + ')')
   )
 
+test_chaining = ()->
+  r = request.defaults({headers: {"X-Request": "knock, knock"}})
+  r = r.defaults({qs: {who: "is there"}})
+  r.get('https://httpbin.org/get')
+  .then((resp)->
+    json_data = JSON.parse(resp.body)
+    throw new Error("Header wasn't passed.") if json_data.headers['X-Request'] != 'knock, knock'
+    throw new Error("QS wasn't passed.") if json_data.args.who != 'is there'
+    console.log('request.defaults().defaults().get(uri): OK')
+  ).fail((err)->
+    console.log('request.defaults().defaults().get(uri): FAIL (' + err + ')')
+  )
+
+
 Q.all(
   test_simple(),
   test_options(),
@@ -94,5 +108,6 @@ Q.all(
   test_verb_post(),
   test_verb_put(),
   test_verb_delete(),
-  test_cookie_jar()
+  test_cookie_jar(),
+  test_chaining()
 )

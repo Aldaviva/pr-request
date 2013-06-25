@@ -23,13 +23,18 @@
   };
 
   _create_method = function(uri, options, method) {
-    var params;
+    var params, _ref, _request;
     if (options == null) {
       options = {};
     }
     params = r.initParams(uri, options, null);
     params.options.method = method;
-    return request(params.uri || null, params.options);
+    if (typeof ((_ref = params.options) != null ? _ref._requester : void 0) === 'function') {
+      _request = params.options._requester;
+    } else {
+      _request = request;
+    }
+    return _request(params.uri || null, params.options);
   };
 
   request.get = function(uri, options) {
@@ -49,12 +54,17 @@
   };
 
   request.head = function(uri, options) {
-    var deferred, req;
+    var deferred, req, _request;
     if (options == null) {
       options = {};
     }
     deferred = Q.defer();
-    req = r.head(uri, options, function(err, res) {
+    if (typeof (options != null ? options._requester : void 0) === 'function') {
+      _request = options._requester;
+    } else {
+      _request = r;
+    }
+    req = _request.head(uri, options, function(err, res) {
       if (err) {
         return deferred.reject(err);
       } else {
@@ -75,27 +85,48 @@
   request.cookie = r.cookie;
 
   request.defaults = function(options) {
-    var de, def, key, _i, _len, _ref;
+    var de, def, key, requester, _i, _len, _ref;
+    if (options == null) {
+      options = {};
+    }
+    if (typeof options._requester === 'function') {
+      requester = options._requester;
+    } else {
+      requester = request;
+    }
     def = function(method) {
       return function(uri, opt) {
-        var key, params, _i, _len;
+        var key, params, value;
         params = r.initParams(uri, opt, null);
-        for (_i = 0, _len = options.length; _i < _len; _i++) {
-          key = options[_i];
-          if (parms.options[key] === void 0) {
-            parms.options[key] = options[key];
+        for (key in options) {
+          value = options[key];
+          if (params.options[key] === void 0) {
+            params.options[key] = value;
           }
         }
+        params.options._requester = requester;
         return method(params.uri, params.options);
       };
     };
-    de = def(request);
-    _ref = ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie', 'defaults'];
+    de = def(requester);
+    _ref = ['get', 'post', 'put', 'patch', 'head', 'del', 'cookie'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
-      de[key] = def(request[key]);
+      de[key] = def(requester[key]);
     }
-    de.jar = request.jar;
+    de.jar = requester.jar;
+    de.defaults = function(opt) {
+      var params, value;
+      params = r.initParams(null, opt, null);
+      for (key in options) {
+        value = options[key];
+        if (params.options[key] === void 0) {
+          params.options[key] = value;
+        }
+      }
+      params.options._requester = requester;
+      return requester.defaults(params.options);
+    };
     return de;
   };
 
