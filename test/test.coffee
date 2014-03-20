@@ -10,7 +10,7 @@ test_simple = ()->
   )
 
 test_options = ()->
-  request('http://google.com/search', {qs: {q: "pr-request"}})
+  request({url: 'http://google.com/search', qs: {q: "pr-request"}})
   .then((resp)->
     if resp.body.indexOf('pr-request') == -1
       throw new Error('"pr-request" not found on page')
@@ -28,10 +28,12 @@ test_verb_get = ()->
   )
 
 test_verb_head = ()->
-  request.head('https://httpbin.org/ip')
+  request.head('https://httpbin.org/get')
   .then((resp)->
-    console.log("resp.body = #{resp.body}")
-    throw new Error("HEAD shouldn't return body") if resp.body?
+    if resp.body.length
+      console.log("resp.body.length =", resp.body.length)
+      console.log("resp.body =", resp.body)
+      throw new Error("HEAD shouldn't return body")
     console.log('request.head(uri): OK')
   ).fail((err)->
     console.log('request.head(uri): FAIL (' + err + ')')
@@ -39,7 +41,7 @@ test_verb_head = ()->
 
 test_verb_post = ()->
   _data = "hello!"
-  request.post('https://httpbin.org/post', {body: _data})
+  request.post({ url: 'https://httpbin.org/post', body: _data})
   .then((resp)->
     json_data = JSON.parse(resp.body)
     throw new Error("POST should contain body same as we gave it") if json_data.data != _data
@@ -50,7 +52,7 @@ test_verb_post = ()->
 
 test_verb_put = ()->
   _data = "PUT hello!"
-  request.put('https://httpbin.org/put', {body: _data})
+  request.put({ url: 'https://httpbin.org/put', body: _data})
   .then((resp)->
     json_data = JSON.parse(resp.body)
     throw new Error("PUT should contain body same as we gave it") if json_data.data != _data
@@ -61,7 +63,7 @@ test_verb_put = ()->
 
 test_verb_delete = ()->
   _data = "DELETE me"
-  request.del('https://httpbin.org/delete', {body: _data})
+  request.del({ url: 'https://httpbin.org/delete', body: _data})
   .then((resp)->
     json_data = JSON.parse(resp.body)
     throw new Error("DELETE should contain body same as we gave it") if json_data.data != _data
@@ -72,7 +74,7 @@ test_verb_delete = ()->
 
 test_cookie_jar = ()->
   request = request.defaults({jar: request.jar()})
-  request('https://httpbin.org/cookies/set', {qs: {foo: "bar"}})
+  request({ url: 'https://httpbin.org/cookies/set', qs: {foo: "bar"}})
   .then((resp)->
     json_data = JSON.parse(resp.body)
     throw new Error('COOKIE "foo" not stored') if json_data.cookies.foo != "bar"

@@ -1,10 +1,11 @@
 {
   "name": "pr-request2",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "promisified `request` module",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/coffee test/test.coffee"
+    "test": "node_modules/.bin/coffee test/test.coffee",
+    "install": "node_modules/.bin/coffee -c index.coffee"
   },
   "repository": "git@github.com:gvangool/pr-request.git",
   "keywords": [
@@ -15,11 +16,14 @@
     "q"
   ],
   "author": "gvangool <gertvangool@gmail.com>",
+  "contributors": [
+    "Ben Hutchison <ben@bluejeans.com>"
+  ],
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "request": "~2.16.6",
-    "q": "~0.9.6"
+    "request": "~2.34.0",
+    "q": "~1.0.1"
   },
   "devDependencies": {
     "coffee-script": "~1.6.3"

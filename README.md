@@ -1,17 +1,24 @@
-# pr-prequest
+pr-prequest2
+============
 promisified `request` module
 
 **not yet stable or really tested. check back soon**
-*underconstruction.gif*
 
 ## usage
 
-    var request = require('pr-request')
+```javascript
+var request = require('pr-request2');
 
-    request('http://www.google.com')
-    .then(function (response) {
-       console.log(response.body)
-    })
+request('http://www.google.com')
+    .then(function(response) {
+       console.log(response.body);
+    });
+
+request({ url: 'http://www.google.com' })
+    .then(function(response) {
+       console.log(response.body);
+    });
+```
 
 ## api
 
@@ -25,7 +32,7 @@ Note, currently only the main `request` function is supported.
 
 ## installation
 
-    $ npm install pr-request
+    $ npm install pr-request2
 
 ## tests
 
@@ -37,7 +44,8 @@ Note, currently only the main `request` function is supported.
 
 ## contributors
 
-jden <jason@denizac.org>
+* jden <jason@denizac.org>
+* Ben Hutchison <ben@bluejeans.com>
 
 ## license
 

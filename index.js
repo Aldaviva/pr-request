@@ -6,13 +6,10 @@
 
   r = require('request');
 
-  request = function(uri, options) {
+  request = function(options) {
     var deferred, req;
-    if (options == null) {
-      options = {};
-    }
     deferred = Q.defer();
-    req = r(uri, options, function(err, res) {
+    req = r(options, function(err, res) {
       if (err) {
         return deferred.reject(err);
       } else {
@@ -22,49 +19,43 @@
     return deferred.promise;
   };
 
-  _create_method = function(uri, options, method) {
+  _create_method = function(options, method) {
     var params, _ref, _request;
-    if (options == null) {
-      options = {};
-    }
-    params = r.initParams(uri, options, null);
+    params = r.initParams(options, null);
     params.options.method = method;
     if (typeof ((_ref = params.options) != null ? _ref._requester : void 0) === 'function') {
       _request = params.options._requester;
     } else {
       _request = request;
     }
-    return _request(params.uri || null, params.options);
+    return _request(params.options);
   };
 
-  request.get = function(uri, options) {
-    return _create_method(uri, options, 'GET');
+  request.get = function(options) {
+    return _create_method(options, 'GET');
   };
 
-  request.post = function(uri, options) {
-    return _create_method(uri, options, 'POST');
+  request.post = function(options) {
+    return _create_method(options, 'POST');
   };
 
-  request.put = function(uri, options) {
-    return _create_method(uri, options, 'PUT');
+  request.put = function(options) {
+    return _create_method(options, 'PUT');
   };
 
-  request.patch = function(uri, options) {
-    return _create_method(uri, options, 'PATCH');
+  request.patch = function(options) {
+    return _create_method(options, 'PATCH');
   };
 
-  request.head = function(uri, options) {
+  request.head = function(options) {
     var deferred, req, _request;
-    if (options == null) {
-      options = {};
-    }
     deferred = Q.defer();
     if (typeof (options != null ? options._requester : void 0) === 'function') {
       _request = options._requester;
     } else {
       _request = r;
     }
-    req = _request.head(uri, options, function(err, res) {
+    req = _request.head(options, function(err, res) {
       if (err) {
         return deferred.reject(err);
       } else {
@@ -74,8 +65,8 @@
     return deferred.promise;
   };
 
-  request.del = function(uri, options) {
-    return _create_method(uri, options, 'DELETE');
+  request.del = function(options) {
+    return _create_method(options, 'DELETE');
   };
 
   request.initParams = r.initParams;
@@ -95,9 +86,9 @@
       requester = request;
     }
     def = function(method) {
-      return function(uri, opt) {
+      return function(opt) {
         var key, params, value;
-        params = r.initParams(uri, opt, null);
+        params = r.initParams(opt, null);
         for (key in options) {
           value = options[key];
           if (params.options[key] === void 0) {
@@ -105,7 +96,7 @@
           }
         }
         params.options._requester = requester;
-        return method(params.uri, params.options);
+        return method(params.options);
       };
     };
     de = def(requester);
@@ -117,7 +108,7 @@
     de.jar = requester.jar;
     de.defaults = function(opt) {
       var params, value;
-      params = r.initParams(null, opt, null);
+      params = r.initParams(opt, null);
       for (key in options) {
         value = options[key];
         if (params.options[key] === void 0) {
