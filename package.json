@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/coffee test/test.coffee",
-    "install": "node_modules/.bin/coffee -c index.coffee"
+    "compile": "node_modules/.bin/coffee -c index.coffee"
   },
   "repository": "git@github.com:gvangool/pr-request.git",
   "keywords": [
