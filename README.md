@@ -1,5 +1,5 @@
-pr-prequest2
-============
+pr-request2
+===========
 promisified `request` module
 
 **not yet stable or really tested. check back soon**
@@ -22,7 +22,7 @@ request({ url: 'http://www.google.com' })
 
 ## api
 
-see [`request`](https://npm.im/request)'s docs.
+see [`request`](https://npmjs.org/request)'s docs.
 
 Note, currently only the main `request` function is supported.
 
